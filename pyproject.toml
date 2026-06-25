@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "h1b"
+version = "0.1.0"
+description = "Facetwork domain: US H-1B visa approvals by state & county (multi-year)"
+requires-python = ">=3.11"
+authors = [{name = "Ralph Lemke"}]
+dependencies = ["requests", "shapely>=2.0"]
+
+[project.entry-points."facetwork.domains"]
+h1b = "h1b:domain"
+
+[tool.setuptools.packages.find]
+where = ["src"]

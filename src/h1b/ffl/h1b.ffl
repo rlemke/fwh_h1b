@@ -1,0 +1,38 @@
+// h1b domain — H-1B visa approvals by US state & county, multi-year.
+//
+// BuildH1bMap fetches the USCIS H-1B Employer Data Hub per-fiscal-year CSVs,
+// aggregates approved petitions by state (State field) and county (employer
+// ZIP -> county GEOID via a centroid point-in-polygon against census county
+// geometry), and renders a MapLibre choropleth with a YEAR dropdown + a
+// state/county level toggle. Output -> cache/h1b/output/index.html.
+
+namespace h1b.maps {
+    /** Aggregate USCIS H-1B approvals (FY2009-2023) by state + county and render
+      * a year-dropdown / state-county-toggle choropleth. Reuses the census-us
+      * cached county geometry. ``force`` re-fetches the USCIS CSVs. */
+    event facet BuildH1bMap(
+        force: Boolean = false
+    ) => (
+        html_path: String,
+        years: Int,
+        county_count: Int,
+        state_count: Int
+    ) with Effect(kind = "external") with Cost(tier = "expensive") with Timeout(minutes = 30)
+}
+
+namespace h1b.workflows {
+    use h1b.maps
+
+    /** Build the US H-1B visa-approvals map (by state & county, multi-year). */
+    workflow BuildH1bVisaMap(
+        force: Boolean = false
+    ) => (status: String, html_path: String, years: Int, county_count: Int) andThen {
+        map = BuildH1bMap(force = $.force)
+        yield BuildH1bVisaMap(
+            status = "completed",
+            html_path = map.html_path,
+            years = map.years,
+            county_count = map.county_count
+        )
+    }
+}
