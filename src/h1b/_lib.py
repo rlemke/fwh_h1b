@@ -90,6 +90,21 @@ def _num(x) -> int:
         return 0
 
 
+def _col(row: dict, *names: str):
+    """First present column among ``names`` — USCIS renamed the approval columns
+    over the years (FY2009-2019 use the plural 'Initial Approvals', FY2021+ use
+    the singular 'Initial Approval')."""
+    for n in names:
+        if n in row:
+            return row[n]
+    return None
+
+
+def _approvals(row: dict) -> int:
+    return (_num(_col(row, "Initial Approval", "Initial Approvals"))
+            + _num(_col(row, "Continuing Approval", "Continuing Approvals")))
+
+
 # ---------------------------------------------------------------------------
 # Aggregate H-1B approvals by state + county across fiscal years.
 # ---------------------------------------------------------------------------
@@ -125,7 +140,7 @@ def download_h1b(*, force: bool = False) -> dict:
         years.append(y)
         fy = str(y)
         for row in rows:
-            appr = _num(row.get("Initial Approval")) + _num(row.get("Continuing Approval"))
+            appr = _approvals(row)
             if appr <= 0:
                 continue
             st = (row.get("State") or "").strip().upper()
