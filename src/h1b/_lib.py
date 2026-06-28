@@ -231,9 +231,9 @@ def _list_census_states() -> list[str]:
     if cstore.is_remote(data_root):
         bucket = data_root.split("://", 1)[1].split("/", 1)[0]
         s3 = boto3.client(
-            "s3", endpoint_url=os.environ.get("AFL_S3_ENDPOINT"),
-            aws_access_key_id=os.environ.get("AFL_S3_ACCESS_KEY"),
-            aws_secret_access_key=os.environ.get("AFL_S3_SECRET_KEY"),
+            "s3", endpoint_url=os.environ.get("FW_S3_ENDPOINT"),
+            aws_access_key_id=os.environ.get("FW_S3_ACCESS_KEY"),
+            aws_secret_access_key=os.environ.get("FW_S3_SECRET_KEY"),
         )
         states = set()
         for pg in s3.get_paginator("list_objects_v2").paginate(

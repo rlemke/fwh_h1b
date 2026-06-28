@@ -19,7 +19,7 @@ domain = DomainPackage(
     ffl_dir=Path(__file__).parent / "ffl",
     register_handlers=register_all_registry_handlers,
     runner_env={
-        "AFL_TASK_EXECUTION_TIMEOUT_MS": "1800000",  # 30 min (15 CSV fetch + ZIP join; cached after)
-        "AFL_STUCK_TIMEOUT_MS": "2100000",
+        "FW_TASK_EXECUTION_TIMEOUT_MS": "1800000",  # 30 min (15 CSV fetch + ZIP join; cached after)
+        "FW_STUCK_TIMEOUT_MS": "2100000",
     },
 )
