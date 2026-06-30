@@ -340,6 +340,15 @@ def _render_html(state_fc: dict, county_fc: dict, years: list[int]) -> str:
     county_js = json.dumps(county_fc, separators=(",", ":"))
     ramp_js = json.dumps(RAMP)
     years_js = json.dumps(years)
+    # Reused for both the control-panel blurb and the "About this data" modal.
+    desc = (
+        "USCIS H-1B approved petitions (Initial + Continuing) by employer location, "
+        "per fiscal year. Darker = more approvals; scale clamped at the 90th "
+        'percentile, high outliers in <b style="color:#5e3c99">purple</b>. Click an '
+        "area for its count. <b>Note:</b> location is the petitioning employer's "
+        "address, not the worker's worksite. Source: USCIS H-1B Employer Data Hub; "
+        "geometry from US Census TIGER."
+    )
     return f"""<!doctype html>
 <html><head><meta charset="utf-8"><title>H-1B visa approvals by US state &amp; county</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -363,6 +372,12 @@ def _render_html(state_fc: dict, county_fc: dict, years: list[int]) -> str:
   .rsearch .res{{background:#fff;border-radius:0 0 6px 6px;box-shadow:0 2px 6px rgba(0,0,0,.2);max-height:240px;overflow:auto}}
   .rsearch .res div{{padding:6px 11px;cursor:pointer;font-size:12px;border-top:1px solid #f0f0f0}}
   .rsearch .res div:hover{{background:#f3f3f3}}
+  .infobtn{{margin-top:8px;width:100%;padding:7px;font-size:13px;cursor:pointer;background:#fff8e1;border:1px solid #f6c343;border-radius:4px;color:#5d4b00}}
+  .infobtn:hover{{background:#fff2c4}}
+  .modal{{position:absolute;inset:0;z-index:5;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center}}
+  .modalcard{{background:#fff;max-width:460px;margin:16px;padding:18px 20px 20px;border-radius:10px;box-shadow:0 4px 24px rgba(0,0,0,.4);position:relative;font:13px/1.5 system-ui,sans-serif;max-height:80vh;overflow:auto}}
+  .modalcard h2{{margin:0 0 8px;font-size:16px}} .modalbody{{color:#333}} .modalbody b{{color:#111}}
+  .modalclose{{position:absolute;top:6px;right:10px;border:none;background:none;font-size:24px;line-height:1;cursor:pointer;color:#999}} .modalclose:hover{{color:#444}}
 </style></head>
 <body>
 <div id="map"></div>
@@ -372,14 +387,11 @@ def _render_html(state_fc: dict, county_fc: dict, years: list[int]) -> str:
   <div>Fiscal year <select id="year"></select></div>
   <div style="margin-top:4px"><label><input type="radio" name="lvl" value="state" checked> By state</label>
   &nbsp; <label><input type="radio" name="lvl" value="county"> By county</label></div>
-  <div style="margin-top:5px;color:#555">USCIS H-1B approved petitions (Initial +
-  Continuing) by employer location, per fiscal year. Darker = more approvals; scale
-  clamped at the 90th percentile, high outliers in <b style="color:#5e3c99">purple</b>.
-  Click an area for its count. <b>Note:</b> location is the petitioning employer's
-  address, not the worker's worksite. Source: USCIS H-1B Employer Data Hub; geometry
-  from US Census TIGER.</div>
+  <div style="margin-top:5px;color:#555">{desc}</div>
+  <button id="infobtn" class="infobtn">&#8505;&#65039; About this data</button>
 </div>
 <div id="legend" class="panel"><b id="lgttl"></b><div class="scale" id="lgscale"></div></div>
+<div id="infomodal" class="modal"><div class="modalcard"><button id="infoclose" class="modalclose">&times;</button><h2>About this data</h2><div class="modalbody">{desc}</div></div></div>
 {_attribution()}
 <script>
 const STATE={state_js}, COUNTY={county_js}, RAMP={ramp_js}, YEARS={years_js};
@@ -441,4 +453,9 @@ map.on('load',()=>{{
       res.appendChild(d);}});}});
   document.addEventListener('click',e=>{{if(!e.target.closest('.rsearch'))res.innerHTML='';}});
 }});
+const _im=document.getElementById('infomodal');
+if(_im){{const ib=document.getElementById('infobtn'),ic=document.getElementById('infoclose');
+ if(ib)ib.onclick=()=>{{_im.style.display='flex';}};
+ if(ic)ic.onclick=()=>{{_im.style.display='none';}};
+ _im.onclick=e=>{{if(e.target===_im)_im.style.display='none';}};}}
 </script></body></html>"""
