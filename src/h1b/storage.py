@@ -1,7 +1,7 @@
 """Backend-aware paths for the h1b cache + outputs.
 
 On the fleet (``FW_STORAGE=s3`` / ``FW_DATA_ROOT=s3://afl-cache``) the cached
-per-country facility aggregate, the world geometry, and the rendered map HTML
+USCIS approval aggregate, the reused census county geometry, and the rendered map HTML
 land in the shared MinIO object store. A thin wrapper over
 ``facetwork.runtime.storage`` (the same shape census-us / conflict / save-earth
 use), so terminal use and fleet runs share one cache rooted at
