@@ -35,6 +35,7 @@ full fetch → aggregate → join → render pipeline and the facet/workflow sur
 |------|----------------|
 | [visualization.md](visualization.md) | The self-contained MapLibre choropleth: fiscal-year dropdown, state/county toggle, p90-clamp colour scale + outlier purple, search, "About this data" modal, attribution. |
 | [storage.md](storage.md) | Backend-aware cache/output (`storage.py`): local `h1b-cache`/`h1b-output` vs `s3://afl-cache/cache/h1b/…`, the stage-local-then-finalize write, and the cross-domain census cache read. |
+| [ffl-examples.md](ffl-examples.md) | **Usage patterns.** A gallery of complete, compile-checked FFL examples over this domain's facet — minimal workflow, `$`-scoping, call-time mixins, `catch`, `when` join guards, cross-domain publish. |
 
 ---
 

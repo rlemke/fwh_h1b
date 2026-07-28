@@ -4,6 +4,40 @@ A standalone [Facetwork](https://github.com/rlemke/facetwork) domain that maps
 **H-1B visa approvals by US state & county**, with a **fiscal-year dropdown**
 (FY2009–FY2023).
 
+## FFL at a glance
+
+The domain is driven from [FFL](https://github.com/rlemke/facetwork/blob/main/docs/reference/language/grammar.md),
+Facetwork's workflow language. A step is `name = Facet(args)`, and later steps
+reference earlier ones as `step.field`:
+
+```ffl
+namespace my.h1b {
+
+    use h1b.maps
+
+    /** Rebuild the H-1B map, optionally re-fetching the USCIS data. */
+    workflow RefreshH1bMap(force: Boolean = false) => (status: String, html_path: String, coverage: Int) andThen {
+
+        map = h1b.maps.BuildH1bMap(force = $.force)
+
+        yield RefreshH1bMap(
+            status = "completed",
+            html_path = map.html_path,
+            coverage = map.years)
+    }
+}
+```
+
+```bash
+fw ffl run --primary my.ffl --library src/h1b/ffl/h1b.ffl \
+  --workflow my.h1b.RefreshH1bMap --inputs '{"force": true}'
+```
+
+📖 **[docs/ffl-examples.md](docs/ffl-examples.md)** — the full example gallery:
+call-time mixins (timeout/retry), `catch`, `when` guards on the ZIP→county join,
+wrapping the shipped workflow, and cross-domain composition (publishing). Every
+snippet there is compile-checked.
+
 ## Feature specifications
 
 Per-feature docs live in [`docs/`](docs/README.md) — one spec per feature, each
