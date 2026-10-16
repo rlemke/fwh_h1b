@@ -405,7 +405,7 @@ function legend(){{
   const o=document.createElement('div');o.innerHTML=`<span style="background:{OUTLIER}"></span>${{'>'+fmtn(hi)}}`;sc.appendChild(o);
 }}
 const map=new maplibregl.Map({{container:'map',style:{{version:8,
-  sources:{{bm:{{type:'raster',tiles:['https://a.basemaps.cartocdn.com/rastertiles/voyager/{{z}}/{{x}}/{{y}}.png','https://b.basemaps.cartocdn.com/rastertiles/voyager/{{z}}/{{x}}/{{y}}.png'],tileSize:256,attribution:'&copy; OpenStreetMap &copy; CARTO &middot; USCIS'}}}},
+  sources:{{bm:{{type:'raster',tiles:['https://tile.openstreetmap.org/{{z}}/{{x}}/{{y}}.png'],tileSize:256,attribution:'&copy; OpenStreetMap &middot; USCIS'}}}},
   layers:[{{id:'bm',type:'raster',source:'bm'}}]}},center:[-96,38],zoom:3.4}});
 map.addControl(new maplibregl.NavigationControl());
 const ysel=document.getElementById('year');
