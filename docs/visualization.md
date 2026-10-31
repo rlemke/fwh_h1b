@@ -56,8 +56,9 @@ levels and all years render together in the one `BuildH1bMap` task.
 
 - **MapLibre GL JS + CSS 4.7.1** — loaded from `unpkg.com` CDN by the page; a
   client-side runtime dependency, **not** a Python/pip one.
-- **CARTO Voyager raster basemap** — `basemaps.cartocdn.com` XYZ tiles (attribution
-  "© OpenStreetMap © CARTO · USCIS").
+- **OpenStreetMap raster basemap** — `tile.openstreetmap.org` XYZ tiles, keyless
+  (attribution "© OpenStreetMap · USCIS"). It replaced CARTO Voyager once CARTO
+  began watermarking keyless requests.
 - **Python:** stdlib only in the render path (`json`, `html.escape`,
   `datetime`) — the geometry work (`shapely` simplify/dissolve) happens in
   `build_h1b_map` before render.

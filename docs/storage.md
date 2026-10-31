@@ -7,12 +7,13 @@
 
 ## Overview
 
-Every cache and output path in the domain flows through `storage.py`, a thin wrapper
-over `facetwork.runtime.storage` that makes the same code work against a **local
+Every cache and output path in the domain flows through `storage.py`, a thin shim
+over the shared `facetwork.domains.storage` layer (`domain_storage("h1b")`, which
+sits on `facetwork.runtime.storage`) that makes the same code work against a **local
 filesystem** (terminal use) or **MinIO/S3** (the fleet). It is the reason a fleet
 runner and a laptop share one logical cache rooted at `$FW_DATA_ROOT/cache/h1b/`.
-This is the same shape census-us / conflict / save-earth use (per the module
-docstring).
+Most fwh_* repos now delegate to the same shared layer; the shim keeps only the
+import path and the names `_lib` already uses (including `_data_root`).
 
 ## How it works
 
@@ -49,8 +50,10 @@ Handles opaque blobs — the JSON aggregates (`h1b-aggregate.json`,
 - **`facetwork.runtime.storage`** — the actual backend (`get_storage_backend`,
   `localize`) selected by `FW_STORAGE` (`local` / `s3` / `hdfs`).
 - **`facetwork.config.get_output_base`** — the default data root.
-- **stdlib** `os` / `tempfile` / `contextlib`. `boto3` is used by `_lib`
-  (`_list_census_states`), not by `storage.py` itself.
+- **`facetwork.domains.storage`** — the shared layer that owns the path layout,
+  env overrides and stage-local-then-finalize writes; `_lib` also uses its
+  `subdirs_containing` for `_list_census_states`. No domain code builds a `boto3`
+  client.
 
 ## Facets & workflows
 

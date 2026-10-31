@@ -75,8 +75,8 @@ first (uncached) run.
 - **`requests`** (pip) — USCIS CSV + ZIP-centroid HTTP fetches.
 - **`shapely>=2.0`** (pip) — geometry `shape`/`mapping`, `simplify`, `unary_union`
   dissolve, `STRtree` + `covers` point-in-polygon (in the ZIP join).
-- **`boto3`** (pip, fleet only) — lists census-us state prefixes in MinIO
-  (`_list_census_states`).
+- **`facetwork.domains.storage`** — lists census-us state prefixes in MinIO
+  (`_list_census_states`) through the runtime's S3 client.
 - **MapLibre GL JS 4.7.1** — client-side only, loaded from `unpkg.com` CDN by the
   rendered HTML; not a Python dependency.
 

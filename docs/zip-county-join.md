@@ -22,11 +22,11 @@ the shared cache and flattens each feature to a record:
 `{geoid: GEOID, name: NAME, state, statefp: STATEFP, pop: population|B01003_001E,
 geometry}`. State discovery is backend-aware via `_list_census_states()`:
 
-- **Remote (S3/MinIO):** `boto3` paginates `list_objects_v2` under
-  `CENSUS_METRICS_PREFIX = "cache/census-us/output/metrics"` and collects each
-  `.../<state>/metrics.geojson` prefix.
-- **Local:** lists subdirs of `<FW_DATA_ROOT>/cache/census-us/output/metrics`
-  containing a `metrics.geojson`.
+one call to the shared `facetwork.domains.storage.subdirs_containing(base,
+"metrics.geojson")`, where `base` is `<data root>/` + `CENSUS_METRICS_PREFIX =
+"cache/census-us/output/metrics"`. It lists the subdirectories that hold a
+`metrics.geojson` through the runtime storage backend, so local paths and `s3://`
+(MinIO) take the same code path; there is no domain-owned `boto3` client any more.
 
 **`_zip_to_geoid()`** — builds (and caches) `{zip5: county_geoid}`:
 
@@ -62,8 +62,9 @@ wall-clock, logged as `"ZIP→county: %d ZIPs mapped in %.1fs"`.
 - **`shapely>=2.0`** (pip) — `geometry.shape`, `geometry.Point`, `strtree.STRtree`,
   `covers`. Imported lazily inside the functions.
 - **`requests`** (pip) — the ZIP-centroid CSV fetch.
-- **`boto3`** (pip, fleet only) — S3 listing of census state prefixes in
-  `_list_census_states`.
+- **`facetwork.domains.storage.subdirs_containing`** — backend-aware listing of
+  census state prefixes in `_list_census_states` (the runtime's S3 client on the
+  fleet).
 
 ## Facets & workflows
 

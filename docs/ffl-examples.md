@@ -209,15 +209,21 @@ namespace my.h1b {
             prefixes = ["h1b/output"],
             dests = ["us/h1b"],
             labels = ["H-1B approvals by state & county"],
-            landing_title = "Facetwork maps")
+            landing_title = "Facetwork maps") after map
 
         yield H1bPublish(pages_url = published.pages_url)
     }
 }
 ```
 
-Compile that one with `--library ~/fw_handlers/fwh_census_us/src/census_us/ffl/census.ffl`
-as well.
+No value flows from `map` into `published` — the publisher reads the rendered
+files from the store — so `after map` is what orders the publish behind the build.
+Without it the two steps run concurrently.
+
+Compile that one with `--library` pointing also at fwh_census_us's
+`src/census_us/handlers/publish/ffl/census_publish.ffl` (which declares
+`census.Publish`) and `src/census_us/handlers/downloads/ffl/census_operations.ffl`
+(the `census.types` it uses).
 
 ---
 
